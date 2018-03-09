@@ -1,3 +1,7 @@
+/* 
+    Created on : 23-févr.-2018, 20:14:25
+    Author     : ceruth
+*/
 body {
     background-color: lightyellow;
 }
@@ -17,8 +21,4 @@ header {
     margin: 10px auto;
     border:1px solid silver;
     box-shadow: 5px 5px 15px black;
-}
-
-img {
-	margin-left:-70px;
 }

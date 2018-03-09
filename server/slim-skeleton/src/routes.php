@@ -19,12 +19,15 @@ $app->get('/api/', function (Request $request, Response $response, array $args) 
 
 $app->get('/api/wines', function (Request $request, Response $response, array $args) {
     $wine =R::findAll('wine') ;
-    echo "Tout les vins";
     return json_encode($wine,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 });
 
-$app->get('/api/wines/search/Chateau', function (Request $request, Response $response, array $args) {
-    echo "API";
+$app->get('/api/wines/search/{name}', function (Request $request, Response $response, array $args) {
+    $name = $args['name'];
+    // ? prépare la requet et à la fin il va nettoyer
+    $wines = R::find('wine', 'name Like ?',["%$name%"]);
+    //var_dump($wines);
+    return json_encode($wine,JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 });
 
 $app->get('/api/wines/10', function (Request $request, Response $response, array $args) {
