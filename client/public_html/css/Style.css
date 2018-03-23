@@ -3,23 +3,31 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 */
-body{
+body {
     background-color: lightyellow;
 }
-
-main, header{
+main, header {
     background-color: white;
-    width:80%;
-    border: 1px solid brown;
+    width: 80%;
+    border:3px solid brown;
+    box-shadow: 5px 5px 15px brown;
     margin-right: auto;
-    margin-left:auto; 
+    margin-left: auto;
     padding: 15px;
-    overflow:hidden;
+    overflow: hidden;
 }
 
-header{
-    border:none;
+header {
+    border: none;
     margin: 10px auto;
-    border: 1px solid silver;
+    border:1px solid silver;
     box-shadow: 5px 5px 15px black;
+}
+
+#frmWine figure {
+    overflow: hidden;
+}
+
+#frmWine figure figcaption {
+    text-align: center;
 }

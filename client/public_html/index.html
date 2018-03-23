@@ -6,85 +6,93 @@ and open the template in the editor.
 -->
 <html>
 <head>
-<title>TODO supply a title</title>
+<title>Client Caviste</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
 
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<!-- Public libraries -->
+<script src="../node_modules/jquery/dist/jquery.min.js"></script>
+<script src="../node_modules/popper.js/dist/umd/popper.min.js"></script>
+<script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
+<link href="http://hayageek.github.io/jQuery-Upload-File/4.0.11/uploadfile.css" rel="stylesheet">
+<script src="http://hayageek.github.io/jQuery-Upload-File/4.0.11/jquery.uploadfile.min.js"></script>
 
-<link rel="stylesheet" type="text/css" href="css/style.css">
+<!-- Personal styles & scripts -->
+<link rel="stylesheet" href="css/style.css">
 <script src="js/app.js"></script>
-
-
-
 </head>
 <body>
 <header>
     <div id="toolbar">
         <form id="frmSearch">
-            <input type="text" name="search">
-            <button type="button" id="btSearch" name="btSearch">Search</button>
-            <button type="button" id="btAllWines" name="btAllWines">All Wine</button>
-            <button type="button" id="btNewWine" name="btNewWine">New Wine</button>
+            <div>
+                <input type="text" name="search">
+                <button type="button" id="btSearch" name="btSearch">Search</button>
+                <button type="button" id="btAllWines" name="btAllWines">All Wines</button>
+                <button type="button" id="btNewWine" name="btNewWine">New Wine</button>
+            </div>
         </form>
         <div class="alert" role="alert"></div>
     </div>
 </header>
 <main>
     <div class="row">
-        <div class="col-lg-4">
+        <div class="col-lg-3">
             <ul class="list-group" id="liste">
-                <li class="list-group-item">Vin 1</li>
-                <li class="list-group-item">Vin 2</li>
-                <li class="list-group-item">Vin 3</li>
-                <li class="list-group-item">Vin 4</li>
-                <li class="list-group-item">Vin 5</li>                 
+                <li class="list-group-item">VIN 1</li>
+                <li class="list-group-item">VIN 2</li>
+                <li class="list-group-item">VIN 3</li>
+                <li class="list-group-item">VIN 4</li>
+                <li class="list-group-item">VIN 5</li>
             </ul>
         </div>
-        <div class="col-lg-8">
-            <form id="frmWine">
+        <div class="col-lg-9">
+            <form id="frmWine" action="#">
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="form-group">
-                             <label for="idWine">Id:</label>
-                             <input class="form-control" type="text" id="idWine" readonly>
+                            <label for="idWine">Id:</label>
+                            <input type="number" class="form-control" id="idWine" readonly>
                         </div>
                         <div class="form-group">
                             <label for="nameWine">Name:</label>
-                            <input class="form-control" type="text" id="nameWine">
+                            <input type="text" class="form-control" id="nameWine">
                         </div>
                         <div class="form-group">
                             <label for="grapesWine">Grapes:</label>
-                            <input class="form-control" type="text" id="grapesWine">
+                            <input type="text" class="form-control" id="grapesWine">
                         </div>
                         <div class="form-group">
                             <label for="countryWine">Country:</label>
-                            <input class="form-control" type="text" id="countryWine">
+                            <input type="text" class="form-control" id="countryWine">
                         </div>
                         <div class="form-group">
                             <label for="regionWine">Region:</label>
-                            <input class="form-control" type="text" id="regionWine">
+                            <input type="text" class="form-control" id="regionWine">
                         </div>
                         <div class="form-group">
                             <label for="yearWine">Year:</label>
-                            <input class="form-control" type="number" id="yearWine" value="">
+                            <input type="number" value="2000" class="form-control" id="yearWine">
                         </div>
-
                         <button type="button" class="btn btn-primary" id="btSaveWine">Save</button>
                         <button type="button" class="btn btn-danger" id="btDeleteWine">Delete</button>
                     </div>
                     <div class="col-lg-6">
                         <figure>
-                            <img src="pictures/wine1.jpg" alt="Wine 1">
+                            <img src="pictures/wine1.jpg" alt="Wine 1" height="300">
                             <figcaption>Wine 1</figcaption>
                         </figure>
+                        <div class="input-group mb-3">
+                            <div class="custom-file" id="uploadZone">
+                           <!--   <input type="file" class="custom-file-input" name="newPicture" id="newPicture"> -->
+                           <!--   <label class="custom-file-label" for="newPicture">Choisir image</label> -->
+                            </div>
+                          </div>
                         <div class="form-group">
-                        <label for="notes">Notes</label>
-                        <textarea class="form-control" name="notes" id="notes" cols="20" rows="5"></textarea>
+                            <label for="notes">Notes:</label>
+                            <textarea name="notes" id="notes" class="form-control" cols="100%" rows="5"></textarea>
                         </div>
                     </div>
                 </div>
@@ -92,6 +100,6 @@ and open the template in the editor.
         </div>
     </div>
 </main>
-    <footer> EPFC</footer>
+<footer>&copy; EPFC</footer>
 </body>
 </html>

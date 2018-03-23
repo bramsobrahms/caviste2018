@@ -4,72 +4,56 @@
  * and open the template in the editor.
  */
 const API_URL = 'http://caviste.localhost/api';
+const CATALOGUE_URL = 'http://caviste.localhost/caviste2018/server/public';
 
-function reportError(message, type='secondary'){
-   
+function reportError(message, type = 'secondary') {
     $('#toolbar .alert').html(message);
     
     switch(type) {
-        case 'error': 
+        case 'error':
             $('#toolbar .alert').addClass('alert-danger'); break;
         case 'success':
             $('#toolbar .alert').addClass('alert-success'); break;
         default:
-            $('#toolbar .alert').addClass('alert-secondary'); break;
+            $('#toolbar .alert').addClass('alert-secondary');
     }
 }
 
-
-function removeError(){
-   
+function removeError() {
     $('#toolbar .alert').html('');
-    $('#toolbar .alert').removeClass().addClass('alert');
     
+    $('#toolbar .alert').removeClass().addClass('alert');
 }
 
-
-
-
 function showWines() {
-    //initialistation
-   
-    $('#liste').empty();
+    //Initialisation 
+    $('#liste').empty();  
     
-    $.get(API_URL + '/wines',function(data){
-        vins = JSON.parse(data);
+    $.get(API_URL + '/wines', function(data) {
+        let vins = JSON.parse(data);
         
-        $.each(vins, function(key,vin){
+        $.each(vins, function(key, vin) {
             $('#liste').append('<li class="list-group-item" data-id="'+vin.id+'">'+vin.name+'</li>');
         });
         
-        
-        
-        $('#liste li').on('click', function(){
+        $('#liste li').on('click', function() {
             let idWine = $(this).data('id');
-            
 
-            $.get(API_URL + '/wines/'+idWine, function(data){
+            $.get(API_URL + '/wines/'+idWine, function(data) {
                 let vin = JSON.parse(data);
                 
                 fillForm(vin);
                 
-                console.log(vin);
-            }).fail(function(){
-                reportError('DÈsolÈ, vin indisponible','error');
-
+            }).fail(function() {
+                reportError('D√©sol√©, la s√©lection n\'est pas disponible en ce moment.','error');
             });
-
         });
-    
-        
-        
-    }).fail(function(){
-        reportError('DÈsolÈ, service indisponible','error');
+    }).fail(function() {
+        reportError('D√©sol√©, le service n\'est pas disponible en ce moment.','error');
     });
 }
 
-
-function fillForm(vin, idForm){
+function fillForm(vin) {
     $('#frmWine #idWine').val(vin.id);
     $('#frmWine #nameWine').val(vin.name);
     $('#frmWine #grapesWine').val(vin.grapes);
@@ -77,11 +61,28 @@ function fillForm(vin, idForm){
     $('#frmWine #regionWine').val(vin.region);
     $('#frmWine #yearWine').val(vin.year);
     $('#frmWine #notes').val(vin.description);
-    $('#frmWine figure img').attr('src','pictures/'+vin.picture);
+    $('#frmWine figure img').attr('src',CATALOGUE_URL+'/pics/'+vin.picture);
     $('#frmWine figure figcaption').html(vin.name);
+    
+    $('#uploadZone').uploadFile({
+        'url':API_URL+'/wines/'+getFormData()['id']+'/pics',
+        'fileName':'newPicture',
+        'acceptFiles':'image/*',
+        'onSuccess': function(files,data,xhr,pd) {
+            if(data) {
+                //Actualiser l'image du vin
+                $('#frmWine figure img').attr('src',CATALOGUE_URL+'/pics/'+files[0]);
+
+                reportError('L\'image du vin a bien √©t√© remplac√©e.','success');
+            } else {
+                reportError('D√©sol√©, Impossible de remplacer l\'image de ce vin!','error');
+            }
+
+        }
+    });
 }
 
-function clearForm(){
+function clearForm() {
     $('#frmWine #idWine').val('');
     $('#frmWine #nameWine').val('');
     $('#frmWine #grapesWine').val('');
@@ -90,10 +91,9 @@ function clearForm(){
     $('#frmWine #yearWine').val('');
     $('#frmWine #notes').val('');
     $('#frmWine figure img').attr('src','pictures/wine1.jpg');
-    $('#frmWine figure figcaption').html('');
+    $('#frmWine figure figcaption').html('Wine 1');
     
     $('#frmWine #nameWine').focus();
-
 }
 
 function getFormData() {
@@ -106,148 +106,160 @@ function getFormData() {
     vin.region = $('#frmWine #regionWine').val();
     vin.year = $('#frmWine #yearWine').val();
     vin.description = $('#frmWine #notes').val();
-    vin.picture = $('#frmWine figure img').attr('src');
+    vin.picture = $('#frmWine figure img').attr('src')
+        .slice($('#frmWine figure img').attr('src').lastIndexOf('/'));
     
-    if((vin.id.trim()!='' ? !$.isNumeric(vin.id): false) || !$.isNumeric(vin.year)
-            || vin.name.trim()=='' 
-            || vin.grapes.trim()=='' 
-            || vin.country.trim()=='' 
-            || vin.region.trim()=='' 
-            || vin.description.trim()=='' 
-            || vin.picture.trim()==''){
+    //Validation des champs
+    if((vin.id.trim()!='' ? !$.isNumeric(vin.id) : false) || !$.isNumeric(vin.year) 
+            || vin.name.trim()==''
+            || vin.grapes.trim()==''
+            || vin.country.trim()==''
+            || vin.region.trim()=='') {
+
         return null;
     }
-    
     return vin;
 }
 
-$(document).ready(function(){
-    
+$(document).ready(function() {    
+  //Initialisation de la page
     //Afficher la liste des vins
     showWines();
     
-    //PrÈparer le formulaire
-    $('#yearWine').val((new Date()).getFullYear());
+    //Pr√©parer le formulaire
+    $('#yearWine').val( (new Date()).getFullYear() );
     
-    
-    //Gestion de commande
-    
-    $('input[name=search]').on('keypress',function(){
-        if(event.keyCode == 13){
+  //Gestion des commandes
+    $('input[name=search]').on('keypress',function() {
+        if(event.keyCode==13) {
             $('#btSearch').click();
         }
-        
-        
     });
     
-    
-    $('#btSearch').on('click', function(){
+    $('#btSearch').on('click', function() {
         removeError();
+        
+        //R√©cup√©rer le mot-cl√© tap√© dans le formulaire
         let keyword = $('form#frmSearch input[name=search]').val();
         
-        if(keyword && keyword.trim() != ''){
-        
-            $.get(API_URL + '/wines/search/'+keyword,function(data){
+        if(keyword && keyword.trim()!='') {
+            //Envoyer une requ√™te au serveur pour obtenir les vins 
+            //dont le nom contient le mot-cl√©
+            $.get(API_URL + '/wines/search/'+keyword, function(data) {
                 vins = JSON.parse(data);
 
-                //vider la liste
+                //Vider la liste
                 $('#liste').empty();
 
-                $.each(vins, function(key,vin){
-                    $('#liste').append('<li class="list-group-item" data-id="'+vin.id+'">'+vin.name+'</li>');  
-                });    
-            }).fail(function(){
-                reportError('DÈsolÈ, le recherche n est pas disponible','error');
-
+                //Mettre √† jour la liste des vins (ul) avec les vins obtenus
+                $.each(vins, function(key, vin) {
+                    $('#liste').append('<li class="list-group-item" data-id="'+vin.id+'">'+vin.name+'</li>');
+                });
+            }).fail(function() {
+                reportError('D√©sol√©, la recherche n\'est pas disponible en ce moment.','error');
             });
-        }else{
-           reportError('Veuillez entrer un mot-clÈ','error');
+        } else {
+            reportError('Veuillez entrer un mot-cl√© dans la barre de recherche.','error');
         }
+        
         //Annuler l'envoi du formulaire
         event.preventDefault();
         return false;
     });
     
-    //Voir tous les vins
-     $('#btAllWines').on('click', function(){
-        //Retirer la notifiction d'erreur
-        removeError()
-         
+    $('#btAllWines').on('click', function() {
+        //Retirer la notification d'erreur
+        removeError();
+        
         //Vider le champ de recherche
         $('input[name=search]').val('');
-        
-        //Afficher la liste
+                
+        //Afficher la liste de tous les vins
         showWines();
-     });
+    });
     
-        //Voir tous les vins
-     $('#btNewWine').on('click', function(){
-        //Retirer la notifiction d'erreur
-        removeError()
-       
+    $('#btNewWine').on('click', function() {
+        //Retirer la notification d'erreur
+        removeError();
+        
         clearForm();
-     });
+    });
     
-     $('#btSaveWine').on('click', function(){
-        //Retirer la notifiction d'erreur
-        removeError()
-       
-       //RÈcupÈrer les donnÈes du formulaire
-       let vin = getFormData();
-       
-       if(vin) {
-            //Sauver le vin dans la vase de donnÈes
-            $.post(API_URL+'/wines',vin, function(data){
-                if(data){
-                    reportError('Le vin a bien ÈtÈ enregistrÈ','success');
-                } else {
-                     reportError('DÈsolÈ, Impossible de sauver ce vin!','error');
-
-                }
-
-            },'json').fail(function(){
-                reportError('DÈsolÈ, Impossible de sauver ce vin!','error');
-            });
-
-
-
-            //Annuler l'envoi du formulaire
-            event.preventDefault();
-            return false;
+    $('#btSaveWine').on('click', function() {
+        //Retirer la notification d'erreur
+        removeError();
+        
+        //R√©cup√©rer les donn√©es du formulaire
+        let vin = getFormData();
+        
+        if(vin) {
+            if(vin.id=='') {    //Insertion d'un nouveau vin
+                //Sauver le vin dans la base de donn√©es
+                $.post(API_URL + '/wines', vin, function(data) {
+                    if(data) {
+                        //Actualiser la liste de tous les vins
+                        showWines();
+                        clearForm();
+                        
+                        reportError('Le vin a bien √©t√© enregistr√©.','success');
+                    } else {
+                        reportError('D√©sol√©, Impossible de sauver ce vin!','error');
+                    }
+                },'json').fail(function() {
+                    reportError('D√©sol√©, Impossible de sauver ce vin!','error');
+                });
+            } else {    //Modification d'un vin existant
+                $.ajax({
+                    'url':API_URL + '/wines/'+vin.id,
+                    'method':'PUT',
+                    'data':JSON.stringify(vin),
+                    'contentType':'application/json'
+                }).done(function(data) {
+                    if(data) {
+                        //Actualiser la liste de tous les vins
+                        showWines();
+                        
+                        reportError('Le vin a bien √©t√© modifi√©.','success');
+                    } else {
+                        reportError('D√©sol√©, Impossible de modifier ce vin!','error');
+                    }
+                }).fail(function() {
+                    reportError('D√©sol√©, Impossible de modifier ce vin!','error');
+                });
+            }
         } else {
-            reportError('Veuillez remplir tous le formulaire en respectant les consignes','error');
+            reportError('Veuillez remplir le formulaire en respectant les consignes, svp!','error');
         }
         
-        
-        
+        //Annuler l'envoi du formulaire
+        event.preventDefault();
+        return false;
     });
     
-    $('#btDeleteWine').on('click',function(){
-        //Retirer la notifiction d'erreur
-        removeError()
+    $('#btDeleteWine').on('click', function() {
+        //Retirer la notification d'erreur
+        removeError();
         
         let vin = getFormData();
-     
-        //Supprimer le vin
-       $.ajax({
-           'method':'DELETE',
-           'url':API_URL+'/wines/'+vin.id
-       }).done(function(data){
-            if(data){
+                
+        $.ajax({
+            'method':'DELETE',
+            'url':API_URL+'/wines/'+vin.id,
+        }).done(function(data){
+            if(data) {
+                //Actualiser la liste de tous les vins
                 showWines();
-               reportError('Le vin a bien ÈtÈ supprimÈ','success');
+                
+                reportError('Le vin a bien √©t√© supprim√©.','success');
             } else {
-               reportError('DÈsolÈ, Impossible de supprimer ce vin!','error');
+                reportError('D√©sol√©, Impossible de supprimer ce vin!','error');
             }
-        }).fail(function(){
-            reportError('DÈsolÈ, Impossible de supprimer ce vin pour le moment!','error');
+        }).fail(function() {
+            reportError('D√©sol√©, Impossible de supprimer ce vin!','error');
         });
-
-
+        
         //Annuler l'envoi du formulaire
-         event.preventDefault();
-         return false;
-       
+        event.preventDefault();
+        return false;
     });
-    
 });
